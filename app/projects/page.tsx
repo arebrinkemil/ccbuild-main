@@ -4,9 +4,10 @@ import { Button } from "@mui/material";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { z } from "zod";
-import { ProjectSchema } from "@/schemas"; // Import the schema
+import { ProjectSchema } from "@/schemas"; // Make sure this is the correct import path
 import { infer as zInfer } from "zod";
 
+// Infer the project type from the Zod schema
 type Project = zInfer<typeof ProjectSchema>;
 
 export default function Projects() {
@@ -19,10 +20,11 @@ export default function Projects() {
         const res = await fetch("/api/projects");
         const data = await res.json();
 
-        const projectsData = z.array(ProjectSchema).safeParse(data.projects);
+        // Validate the data directly as an array of Project objects
+        const projectsData = z.array(ProjectSchema).safeParse(data);
 
         if (projectsData.success) {
-          setProjects(projectsData.data);
+          setProjects(projectsData.data); // Set the validated data
         } else {
           setError("Invalid data format");
           console.error(projectsData.error);
@@ -58,6 +60,7 @@ export default function Projects() {
               <h1>{project._id}</h1>
               <h1 className="font-bold">{project.name}</h1>
               <p>{project.description}</p>
+              <p>{new Date(project.date).toLocaleDateString()}</p>
             </div>
           </Link>
         ))}
