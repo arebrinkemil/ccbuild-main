@@ -217,6 +217,7 @@ export type ProductLogisticData = z.infer<typeof ProductLogisticSchema>;
 
 // PROJECT SCHEMA
 export const ProjectSchema = z.object({
+  _id: objectIdSchema.optional(),
   userId: objectIdSchema.optional(),
   name: z.string().optional(),
   date: z.date().optional(),

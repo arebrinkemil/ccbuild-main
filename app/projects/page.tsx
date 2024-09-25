@@ -1,41 +1,67 @@
-// import { Button } from "@mui/material";
-// import { getProject } from "@/actions/projectAction";
-// import Link from "next/link";
+"use client";
 
-// export default async function Projects() {
-//   const projects = await getProject();
+import { Button } from "@mui/material";
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import { z } from "zod";
+import { ProjectSchema } from "@/schemas"; // Import the schema
+import { infer as zInfer } from "zod";
 
-//   return (
-//     <>
-//       <Link href={`/projects/create`}>
-//         <Button variant="contained" color="primary" className="mt-8">
-//           Create project
-//         </Button>
-//       </Link>
-//       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-//         {projects.map((project) => (
-//           <Link
-//             href={`/projects/${project.id}`}
-//             key={project._id}
-//             className="flex aspect-square flex-col justify-between rounded-lg bg-white p-6 text-black shadow-lg"
-//           >
-//             <div className="my-2">
-//               <h1>{project.id}</h1>
-//               <h1 className="font-bold">{project.name}</h1>
-//               <p>{project.description}</p>
-//               <p>{project.date.toLocaleDateString()}</p>
-//             </div>
-//           </Link>
-//         ))}
-//       </div>
-//     </>
-//   );
-// }
+type Project = zInfer<typeof ProjectSchema>;
 
-export default async function Projects() {
+export default function Projects() {
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        const res = await fetch("/api/projects");
+        const data = await res.json();
+
+        const projectsData = z.array(ProjectSchema).safeParse(data.projects);
+
+        if (projectsData.success) {
+          setProjects(projectsData.data);
+        } else {
+          setError("Invalid data format");
+          console.error(projectsData.error);
+        }
+      } catch (error) {
+        setError("Error fetching projects");
+        console.error("Error fetching projects:", error);
+      }
+    };
+
+    fetchProjects();
+  }, []);
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
+
   return (
     <>
-      <div>hello 2</div>
+      <Link href={`/projects/create`}>
+        <Button variant="contained" color="primary" className="mt-8">
+          Create project
+        </Button>
+      </Link>
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+        {projects.map((project) => (
+          <Link
+            href={`/projects/${project._id}`}
+            key={project._id}
+            className="flex aspect-square flex-col justify-between rounded-lg bg-white p-6 text-black shadow-lg"
+          >
+            <div className="my-2">
+              <h1>{project._id}</h1>
+              <h1 className="font-bold">{project.name}</h1>
+              <p>{project.description}</p>
+            </div>
+          </Link>
+        ))}
+      </div>
     </>
   );
 }
