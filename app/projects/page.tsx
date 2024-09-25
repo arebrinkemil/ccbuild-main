@@ -60,7 +60,6 @@ export default function Projects() {
               <h1>{project._id}</h1>
               <h1 className="font-bold">{project.name}</h1>
               <p>{project.description}</p>
-              <p>{new Date(project.date).toLocaleDateString()}</p>
             </div>
           </Link>
         ))}
