@@ -8,15 +8,11 @@ const projectSchema = new mongoose.Schema({
   },
   name: {
     type: String,
-    required: true,
-  },
-  date: {
-    type: Date,
-    required: true,
+    required: false,
   },
   description: {
     type: String,
-    required: true,
+    required: false,
   },
 });
 

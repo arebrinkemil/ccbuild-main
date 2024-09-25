@@ -220,7 +220,6 @@ export const ProjectSchema = z.object({
   _id: objectIdSchema.optional(),
   userId: objectIdSchema.optional(),
   name: z.string().optional(),
-  date: z.date().optional(),
   description: z.string().optional(),
 });
 
